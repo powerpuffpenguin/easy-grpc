@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/google/go-jsonnet"
+	"github.com/powerpuffpenguin/easy-grpc/core"
 )
 
 func Load(filename string, v any) (e error) {
@@ -12,7 +13,8 @@ func Load(filename string, v any) (e error) {
 	if e != nil {
 		return
 	}
-	e = json.Unmarshal([]byte(jsonStr), v)
+
+	e = json.Unmarshal(core.StringToBytes(jsonStr), v)
 	if e != nil {
 		return
 	}

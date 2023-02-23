@@ -365,6 +365,8 @@ github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6J
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
+github.com/powerpuffpenguin/easy-grpc v0.0.0-20230223123238-9ee2afdde262 h1:J33QScFn6LfNXCbgWHOSqhmU4+OnOdDMQcwRiV6Q6co=
+github.com/powerpuffpenguin/easy-grpc v0.0.0-20230223123238-9ee2afdde262/go.mod h1:Px3PyyMmq2eR+vurZFBtl9IyfwSzWSo7+CIgf9tlydE=
 github.com/powerpuffpenguin/sessionstore v0.0.0-20220521153746-9276fa0771d5 h1:3vkoZwKj6GoMrWhuV0tPxAjOb5x7yiBZRPrLXN/LF5c=
 github.com/powerpuffpenguin/sessionstore v0.0.0-20220521153746-9276fa0771d5/go.mod h1:zuecW6VEpMvbCTig2TBx36PmyhLoTtIqz98NYiS+P30=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=

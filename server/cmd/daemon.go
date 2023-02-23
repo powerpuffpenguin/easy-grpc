@@ -1,16 +1,16 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"path/filepath"
-	"server/cmd/internal/daemon"
 	"server/configure"
-	"server/db/manipulator"
-	"server/logger"
-	"server/sessionid"
-	"server/utils"
 
+	"github.com/powerpuffpenguin/easy-grpc/core/path"
+
+	"github.com/powerpuffpenguin/easy-grpc/core"
+	"github.com/powerpuffpenguin/easy-grpc/core/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ func init() {
 	var (
 		filename    string
 		debug, test bool
-		basePath    = utils.BasePath()
+		basePath    = path.BasePath()
 
 		addr string
 	)
@@ -27,8 +27,8 @@ func init() {
 		Use:   `daemon`,
 		Short: `run as daemon`,
 		Run: func(cmd *cobra.Command, args []string) {
-			// load configure
-			cnf := configure.DefaultConfigure()
+			// 加載配置
+			cnf := configure.Default()
 			e := cnf.Load(filename)
 			if e != nil {
 				log.Fatalln(e)
@@ -36,27 +36,30 @@ func init() {
 			if addr != `` {
 				cnf.HTTP.Addr = addr
 			}
+			// 測試配置
 			if test {
-				fmt.Println(cnf)
+				b, e := json.MarshalIndent(cnf, "", "\t")
+				if e != nil {
+					log.Fatalln(e)
+				}
+				fmt.Println(core.BytesToString(b))
 				return
 			}
-			// init logger
-			e = logger.Init(basePath, &cnf.Logger)
-			if e != nil {
-				log.Fatalln(e)
-			}
 
-			// init db
-			manipulator.Init(&cnf.DB)
-			sessionid.Init(&cnf.Session)
+			// 初始化日誌
+			logger.Init(basePath, &cnf.Logger)
 
-			daemon.Run(&cnf.HTTP, debug)
+			// // init db
+			// manipulator.Init(&cnf.DB)
+			// sessionid.Init(&cnf.Session)
+
+			// daemon.Run(&cnf.HTTP, debug)
 		},
 	}
 	flags := cmd.Flags()
 	flags.StringVarP(&filename, `config`,
 		`c`,
-		utils.Abs(basePath, filepath.Join(`etc`, `server.jsonnet`)),
+		path.Abs(basePath, filepath.Join(`etc`, `server.jsonnet`)),
 		`configure file`,
 	)
 	flags.StringVarP(&addr, `addr`,

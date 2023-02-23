@@ -1,55 +1,33 @@
 package configure
 
 import (
-	"encoding/json"
-
-	"easy-grpc/core/cnf"
-	"server/logger"
+	"github.com/powerpuffpenguin/easy-grpc/core/cnf"
 )
 
 var defaultConfigure Configure
 
-// DefaultConfigure return default Configure
-func DefaultConfigure() *Configure {
+// 返回設定單例
+func Default() *Configure {
 	return &defaultConfigure
 }
 
+// 設定檔案 內存映射
 type Configure struct {
-	HTTP    HTTP
-	Session Session
-	DB      DB
-	Logger  logger.Options
+	// http 服務
+	HTTP cnf.HTTP
+	// 會話
+	Session cnf.Session
+	// 數據庫
+	DB cnf.DB
+	// 日誌
+	Logger cnf.Logger
 }
 
-func (c *Configure) String() string {
-	if c == nil {
-		return "nil"
-	}
-	b, e := json.MarshalIndent(c, ``, `	`)
-	if e != nil {
-		return e.Error()
-	}
-	return string(b)
-}
-
+// 加載設定
 func (c *Configure) Load(filename string) (e error) {
 	e = cnf.Load(filename, c)
 	if e != nil {
 		return
 	}
-
-	var formats = []format{
-		&c.DB, &c.Session,
-	}
-	for _, format := range formats {
-		e = format.format()
-		if e != nil {
-			return
-		}
-	}
 	return
-}
-
-type format interface {
-	format() (e error)
 }
