@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package jsgenerate_server.session;
+option go_package = "server/protocol/session";
+
+import "google/api/annotations.proto";
+
+service Session {
+    // sign in and return token 
+    rpc Signin (SigninRequest) returns (SigninResponse){
+        option (google.api.http) = {
+            post: "/api/v1/sessions"
+            body: "*"
+        };
+    }
+    // sign out and destroy token
+    rpc Signout (SignoutRequest) returns (SignoutResponse){
+        option (google.api.http) = {
+            delete: "/api/v1/sessions/access"
+        };
+    }
+    // refresh token
+    rpc Refresh (RefreshRequest) returns (RefreshResponse){
+        option (google.api.http) = {
+            post: "/api/v1/sessions/refresh"
+            body: "*"
+        };
+    }
+    // change session's password
+    rpc Password (PasswordRequest) returns (PasswordResponse){
+        option (google.api.http) = {
+            post: "/api/v1/sessions/password"
+            body: "*"
+        };
+    }
+    // get user info
+    rpc User (UserRequest) returns (UserResponse){
+        option (google.api.http) = {
+            get: "/api/v1/sessions/access"
+        };
+    }
+}
+message SigninRequest{
+    string platform = 1;
+    string name = 2;
+    // md5string(platform + '.' + md5string(input_password) + '.' + unix)
+    string password = 3;
+    // the current time unix value error cannot exceed 5 minutes
+    int64 unix = 4;
+    // cookie mode only for debug
+    bool cookie = 5;
+}
+message Data{
+    int64 id = 2;
+    // [a-zA-Z][a-zA-Z0-9]{4,}
+    string name = 3;   
+    string nickname = 4;
+    repeated int32 authorization = 5;
+}
+message SigninResponse{
+    Token token = 1;
+    Data data = 2;
+}
+message SignoutRequest{
+    // cookie mode only for debug
+    bool cookie = 1;
+}
+message SignoutResponse{
+}
+message RefreshRequest{
+    // old access token
+    string access = 1;
+    // old refresh token
+    string refresh = 2;
+}
+message RefreshResponse{
+    Token token = 1;
+}
+message PasswordRequest{
+    // old password
+    string old = 1;
+    // new password
+    string password = 2;
+}
+message PasswordResponse{
+    bool changed = 1;
+}
+message UserRequest{
+}
+message UserResponse{
+    int64 id = 1;
+    // [a-zA-Z][a-zA-Z0-9]{4,}
+    string name = 2;   
+    string nickname = 3;
+    repeated int32 authorization = 4;
+}
+message Token {
+    // 訪問 token
+    // token 編碼規則爲爲 
+    // var playdata=RawUrlBase64(id)+'.'+RawUrlBase64(platform)+'.'+RawUrlBase64(random_uuid)
+    // var access=playdata + '.' + sign(playdata)
+    string access = 1;
+    // 刷新 token
+    string refresh = 2;
+    // 訪問 token 過期時間 unix
+    int64 accessDeadline = 3;
+    // 刷新 token 過期時間 unix
+    int64 refreshDeadline = 4;
+    // 會話最長維持時間 unix 如果爲 0 不限制
+    int64 deadline = 5;
+}
+message Raw{
+    Data data=1;
+    Token token=2;
+}
